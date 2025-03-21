@@ -1,23 +1,16 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,Session
-from fastapi import Depends
-from sqlalchemy.ext.declarative import declarative_base
-from typing import Annotated
-import models
 import os
 from dotenv import load_dotenv
+from supabase import create_client, Client
+
+# Load environment variables
 load_dotenv()
-url_database=os.getenv("DATABASE_URL")
-engine=create_engine(url_database)
-sessionlocal=sessionmaker(autocommit=False,autoflush=False,bind=engine)
 
-Base=declarative_base()
-
-def db_connect():
-    db=sessionlocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-db_dependancy=Annotated[Session,Depends(db_connect)]
+# Supabase client
+def get_supabase_client() -> Client:
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
+    
+    if not supabase_url or not supabase_key:
+        raise ValueError("Supabase URL and key must be set in environment variables")
+        
+    return create_client(supabase_url, supabase_key)

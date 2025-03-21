@@ -1,1 +1,1 @@
-from routes.authRoute import router as auth_router
+# Empty init file to make routes a proper package
